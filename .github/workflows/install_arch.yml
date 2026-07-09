@@ -15,18 +15,19 @@ jobs:
         uses: actions/checkout@v6
       - name: 'Build packages inside Arch Linux Container'
         run: |
-          sudo apt -y update && sudo apt -y upgrade
-          sudo apt install -y podman docker-compose
+          # sudo apt -y update && sudo apt -y upgrade
+          # sudo apt install -y podman docker-compose
           
           sudo tee -a "/etc/containers/registries.conf.d/10-unqualified-search-registries.conf" <<EOF
           unqualified-search-registries = ["docker.io"]
           EOF
           
-          export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
-          systemctl enable --now --user podman.socket
+          # export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
+          # systemctl enable --now --user podman.socket
+          
+          #  podman run --rm -e 
+          podman run --rm -e TARGET_PKG="${{ inputs.packages }}" -v ${{ github.workspace }}:/workspace archlinux:base /bin/bash -c whoami
 
-        #  podman run --rm -e 
-         # podman run --rm -e TARGET_PKG="$TARGET_PKG" -v ${{ github.workspace }}:/workspace archlinux:base /bin/bash -c '
 
 
 
