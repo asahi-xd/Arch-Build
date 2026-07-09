@@ -45,6 +45,15 @@ jobs:
               done
               "
               '
+      - name: 'Sanitize Package Filenames for GitHub Artifacts'
+        run: |
+          echo "Checking for filenames with invalid characters..."
+          find . -type f -name "*:*.pkg.tar.zst" | while read -r file; do
+            new_file="${file//:/-}"
+            echo "Renaming $file to $new_file"
+            mv "$file" "$new_file"
+          done
+
       - name: 'Figure out the current date and time for artifact name.'
         run: echo "BUILD_DATE=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
 
