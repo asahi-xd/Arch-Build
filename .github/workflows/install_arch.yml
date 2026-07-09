@@ -38,10 +38,12 @@ jobs:
             sudo --preserve-env=INPUT_PKGS -u builder --set-home bash -c "
               cd /workspace
               packages=($INPUT_PKGS)
+              echo $packages
               for i in ${packages[@]}; do
                 git clone https://aur.archlinux.org/$i.git
                 cd $i
                 makepkg -s --noconfirm
+                echo $i
               done
               "
               '
