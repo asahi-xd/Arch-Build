@@ -22,30 +22,31 @@ jobs:
       - name: Compile Package inside Arch Linux Container
         run: |
           # Define the target package
-          TARGET_PKG="${{ github.event.inputs.package_name || 'gtk2' }}"
+          export TARGET_PKG="${{ github.event.inputs.package_name || 'gtk2' }}"
           echo "Target package set to: $TARGET_PKG"
           
-          # Run the build process inside an official Arch Linux container
-          docker run --rm -v ${{ github.workspace }}:/workspace archlinux:base /bin/bash -c "
+          # 1. Use -e TARGET_PKG="$TARGET_PKG" to pass the variable into Docker
+          # 2. Swap to single quotes for the outer docker bash command to avoid premature expansion
+          docker run --rm -e TARGET_PKG="$TARGET_PKG" -v ${{ github.workspace }}:/workspace archlinux:base /bin/bash -c '
             # Update system and install base development tools
             pacman -Syu --noconfirm base-devel git sudo
 
-            # makepkg strictly forbids running as root. Create a generic builder user.
+            # Create a generic builder user
             useradd -m builder
-            echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+            echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
             chmod -R a+rw /workspace
             
             # Switch to the non-root user context
-            sudo -u builder bash -c '
+            # Use -E with sudo to pass the TARGET_PKG environment variable down to the builder user
+            sudo -u builder -E bash -c "
               cd /workspace
-              git clone https://aur.archlinux.org/\${TARGET_PKG}.git
-              cd \${TARGET_PKG}
-              
-              # Optional: Here you could add logic to compare pkgver against a saved version
+              git clone https://aur.archlinux.org/${TARGET_PKG}.git
+              cd ${TARGET_PKG}
               
               # Download dependencies, compile code, and package without prompting
               makepkg -s --noconfirm
-            '
+            
+          '
           "
 
       - name: Upload Compiled Package
