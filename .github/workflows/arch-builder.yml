@@ -45,7 +45,7 @@ jobs:
               
               # Download dependencies, compile code, and package without prompting
               makepkg -s --noconfirm
-            
+            "
           '
           "
 
