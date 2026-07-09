@@ -33,9 +33,10 @@ jobs:
 
             chmod -R a+rw /workspace
 
+            sed -i -E "/^OPTIONS=\(/ s/([[:space:]]|\()debug([[:space:]]|\))/\1!debug\2/g" /etc/makepkg.conf
+ 
             sudo --preserve-env=INPUT_PKGS -u builder --set-home bash -c "
               cd /workspace
-              sudo sed -i -E '/^OPTIONS=\(/ s/([[:space:]]|\()debug([[:space:]]|\))/\1!debug\2/g' /etc/makepkg.conf
               git clone https://aur.archlinux.org/yay-bin.git
               cd yay-bin
               makepkg -si --noconfirm
