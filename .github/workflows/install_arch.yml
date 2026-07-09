@@ -1,4 +1,4 @@
-name: 'Install Arch Linux inside Podman, and Build AUR Packages'
+name: 'Install Arch Linux inside Podman, and Build AUR Packages.'
 
 on:
   workflow_dispatch:
@@ -11,10 +11,10 @@ jobs:
   setup_arch:
     runs-on: ubuntu-latest
     steps:
-      - name: "Checkout Repository"
+      - name: "Checkout Repository."
         uses: actions/checkout@v7
 
-      - name: 'Build packages inside Arch Linux Container'
+      - name: 'Build packages inside Arch Linux Container.'
         run: |
           echo "Building: ${{ inputs.packages }}"
           
@@ -38,17 +38,25 @@ jobs:
             sudo --preserve-env=INPUT_PKGS -u builder --set-home bash -c "
               cd /workspace
               packages=(\$INPUT_PKGS)
-              echo \${packages[@]}
               for i in \${packages[@]}; do
                 git clone https://aur.archlinux.org/\$i.git
                 cd \$i
                 makepkg -s --noconfirm
-                echo \$i
               done
               "
               '
-            
-            
+      - name: 'Figure out the current date and time for artifact name.'
+        run: echo "BUILD_DATE=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
+
+      - name: 'Upload built packages'
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.BUILD_DATE }}_GH_Actions_${{ inputs.packages }}
+          path: '**/*.pkg.tar.zst'
+          retention-days: 7
+          compression-level: 9
+          if-no-files-found: error
+
 
 
 
