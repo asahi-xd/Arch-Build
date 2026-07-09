@@ -1,4 +1,4 @@
-name: 'Install Arch Linux inside Podman, and Build AUR Packages.'
+name: 'Build AUR Packages'
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
       - name: "Checkout Repository."
         uses: actions/checkout@v7
 
-      - name: 'Build packages inside Arch Linux Container.'
+      - name: 'Build AUR packages inside an Arch Linux container.'
         run: |
           echo "Building: ${{ inputs.packages }}"
           
@@ -46,7 +46,7 @@ jobs:
               done
               "
               '
-      - name: 'Sanitize Package Filenames for GitHub Artifacts'
+      - name: 'Sanitize package filenames for GitHub artifacts.'
         run: |
           echo "Checking for filenames with invalid characters..."
           find . -type f -name "*:*.pkg.tar.zst" | while read -r file; do
