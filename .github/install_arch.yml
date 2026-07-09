@@ -1,0 +1,38 @@
+name: 'Install Arch Linux inside Podman, and Build AUR Packages'
+
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'List of packages to build, separated by space.'
+        required: true
+        type: string
+jobs:
+  setup_arch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v6
+
+      - name: 'Build packages inside Arch Linux Container'
+        run: |
+          apt -y update && apt -y upgrade
+          apt install -y podman
+       #  apt install -y podman docker-compose
+
+          tee -a "/etc/containers/registries.conf.d/10-unqualified-search-registries.conf" <<EOF
+          unqualified-search-registries = ["docker.io"]
+          EOF
+        
+       #  export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
+
+       #  systemctl enable --now --user podman.socket
+
+        #  podman run --rm -e 
+          podman run --rm -e TARGET_PKG="$TARGET_PKG" -v ${{ github.workspace }}:/workspace archlinux:base /bin/bash -c '
+
+
+
+
+
+
