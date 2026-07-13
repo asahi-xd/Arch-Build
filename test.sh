@@ -32,13 +32,23 @@ if [ ${#invalid_pkgs[@]} -ne 0 ]; then
     exit 1
 fi
 
+echo "Do you want to read the PKGBUILDs for the provided package(s)? [yes/no]"
+echo "Press ENTER for the default choice [yes]. Or Press Ctrl+C to cancel the script and exit."
 
+read choice
 
+case "$choice" in
+    "yes" )
+        echo "Do something"
+    ;;
+    "no" )
+        echo "Do something else"
+    ;;
+    * )
+        echo "No choice made, defaulting to [yes]."
+    ;;
+esac
 
-
-# If the packages were valid, then add a logic block here that asks the user if they want to
-# Read the respective PKGBUILDs, by opening them One by one with less
-# Then have the user confirm that they wish to continue, and then continue or exit the script.
 
 echo "Running the workflow...\n"
 echo "Building package(s): $@"
