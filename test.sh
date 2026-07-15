@@ -44,8 +44,12 @@ case "$choice" in
     "no" )
         echo "Do something else"
     ;;
-    * )
+    "" )
         echo "No choice made, defaulting to [yes]."
+    ;;
+    * )
+        echo "Invalid choice. Exiting script..."
+        exit 1
     ;;
 esac
 
