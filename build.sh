@@ -59,13 +59,15 @@ esac
 
 
 printf "\nRunning the workflow...\n\n"
-printf "Building package(s): '$@'\n"
+printf "Building package(s):\n"
+echo "$@"
+echo ""
 
 shopt -s globstar
 
 gh workflow run \
     "$WORKFLOW" -R "$REPO" \
-    -f packages="$@" \
+    -f packages="$*" \
     && sleep 5 \
     && RUN_ID=$(gh run list --workflow=$WORKFLOW -R $REPO --limit 1 --json databaseId --jq '.[0].databaseId') \
     && gh run -R "$REPO" watch $RUN_ID \
