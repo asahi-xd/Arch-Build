@@ -76,7 +76,7 @@ gh workflow run \
     && echo $ARTIFACT_NAME \
     && cp -r "$DOWNLOAD_TMP_DIR"/"$ARTIFACT_NAME"/**/*.pkg.tar.zst "$LOCAL_REPO_DIR"/"$LOCAL_REPO_NAME" \
     && echo "Adding package(s) to local repository..." \
-    && repo-add "$LOCAL_REPO_DIR"/"$LOCAL_REPO_NAME"/"$LOCAL_REPO_NAME".db.tar.zst "$LOCAL_REPO_DIR"/"$LOCAL_REPO_NAME"/*.pkg.tar.zst \
+    && repo-add --new --prevent-downgrade "$LOCAL_REPO_DIR"/"$LOCAL_REPO_NAME"/"$LOCAL_REPO_NAME".db.tar.zst "$LOCAL_REPO_DIR"/"$LOCAL_REPO_NAME"/*.pkg.tar.zst \
     && printf "\nSuccessfully built and added packages to local repo!\n"
 
 
