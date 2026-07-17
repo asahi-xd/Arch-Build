@@ -1,25 +1,27 @@
 #!/bin/bash
 
-if [ $(id --user) -eq 0 ]; then
-    echo "Do not run this script as root."
-    exit 1
-fi
-
-if [ $# -eq 0 ]; then
-    echo "$# packages provided as argument."
-    exit 1
-fi
-
 WORKFLOW="aur-build.yml"
 REPO="asahi-xd/AUR-Build"
 LOCAL_REPO_NAME="gh-aur-builds"
 LOCAL_REPO_DIR="/mnt/Data_Drive/.local/pacman/repo"
 DOWNLOAD_TMP_DIR="/mnt/Data_Drive/.local/pacman/tmp"
 
+# check for root
+if [ $(id --user) -eq 0 ]; then
+    echo "Do not run this script as root."
+    exit 1
+fi
+
+# check if any packages were even provided as argument
+if [ $# -eq 0 ]; then
+    echo "$# packages provided as argument."
+    exit 1
+fi
+
 # Ensure directories exist
 mkdir -p "$LOCAL_REPO_DIR"/"$LOCAL_REPO_NAME"
 
-# Ensure repo was added to /etc/pacman.conf
+# Ensure local repo was added to /etc/pacman.conf
 if pacman-conf --repo-list | grep -q "^${LOCAL_REPO_NAME}$"; then
     echo "Local repository found. Continuing..."
 else
