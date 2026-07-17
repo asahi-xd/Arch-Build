@@ -19,6 +19,17 @@ DOWNLOAD_TMP_DIR="/mnt/Data_Drive/.local/pacman/tmp"
 # Ensure directories exist
 mkdir -p "$LOCAL_REPO_DIR"/"$LOCAL_REPO_NAME"
 
+# Ensure repo was added to /etc/pacman.conf
+case "$( pacman-conf --repo-list )" in
+    *$LOCAL_REPO_NAME*)
+        echo "Local repository found. Continuing..."
+    ;;
+    *)
+        echo "Local repository does not exist in your /etc/pacman.conf file."
+        echo "Please add it manually before running the script."
+        exit 1
+    ;;
+esac
 
 printf "Verifying that the package names provided are valid...\n\n"
 
@@ -64,6 +75,7 @@ echo "$@"
 echo ""
 
 shopt -s globstar
+trap 'printf "\nNot allowed to SIGINT while workflow is running..."' INT
 
 gh workflow run \
     "$WORKFLOW" -R "$REPO" \
@@ -77,7 +89,8 @@ gh workflow run \
     && cp -r "$DOWNLOAD_TMP_DIR"/"$ARTIFACT_NAME"/**/*.pkg.tar.zst "$LOCAL_REPO_DIR"/"$LOCAL_REPO_NAME" \
     && echo "Adding package(s) to local repository..." \
     && repo-add --new --prevent-downgrade "$LOCAL_REPO_DIR"/"$LOCAL_REPO_NAME"/"$LOCAL_REPO_NAME".db.tar.zst "$LOCAL_REPO_DIR"/"$LOCAL_REPO_NAME"/*.pkg.tar.zst \
-    && printf "\nSuccessfully built and added packages to local repo!\n"
+    && printf "\nSuccessfully built and added AUR package(s) to the local repo!\n"
 
+trap INT
 
 
