@@ -20,16 +20,13 @@ DOWNLOAD_TMP_DIR="/mnt/Data_Drive/.local/pacman/tmp"
 mkdir -p "$LOCAL_REPO_DIR"/"$LOCAL_REPO_NAME"
 
 # Ensure repo was added to /etc/pacman.conf
-case "$( pacman-conf --repo-list )" in
-    *$LOCAL_REPO_NAME*)
-        echo "Local repository found. Continuing..."
-    ;;
-    *)
-        echo "Local repository does not exist in your /etc/pacman.conf file."
-        echo "Please add it manually before running the script."
-        exit 1
-    ;;
-esac
+if pacman-conf --repo-list | grep -q "^${LOCAL_REPO_NAME}$"; then
+    echo "Local repository found. Continuing..."
+else
+    echo "Local repository does not exist in your /etc/pacman.conf file."
+    echo "Please add it manually before running the script."
+    exit 1
+fi
 
 printf "Verifying that the package names provided are valid...\n\n"
 
